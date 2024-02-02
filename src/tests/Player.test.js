@@ -27,3 +27,10 @@ test("computers can randomly attack", () => {
   enemy.attack(player);
   expect(player.gameBoard.shots.length).toBe(1);
 });
+
+test("player can't attack himself", () => {
+  player.turn = true;
+  expect(() => {
+    player.attack(player, 0, 0);
+  }).toThrow("Players can't attack themselves");
+});

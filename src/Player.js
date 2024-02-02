@@ -22,6 +22,10 @@ class Player {
   }
 
   attack(player, row, column) {
+    if (player === this) {
+      throw new Error("Players can't attack themselves");
+    }
+
     if (!this.turn) {
       throw new Error(`It is not ${player.name}'s turn`);
     }
