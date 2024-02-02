@@ -24,11 +24,3 @@ class Game {
 }
 
 export default Game;
-
-// const populatePlayerBoard = () => {
-//   player.gameBoard.placeShip(new Ship(5), 0, 0, "row");
-//   player.gameBoard.placeShip(new Ship(4), 0, 7, "column");
-//   player.gameBoard.placeShip(new Ship(3), 8, 0, "row");
-//   player.gameBoard.placeShip(new Ship(3), 6, 0, "row");
-//   player.gameBoard.placeShip(new Ship(2), 5, 9, "column");
-// };
