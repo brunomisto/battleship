@@ -13,6 +13,10 @@ class Gameboard {
     return blocks;
   }
 
+  static getRandomDirection() {
+    return Math.floor(Math.random() * 2) === 0 ? "row" : "column";
+  }
+
   constructor() {
     this.blocks = Gameboard.getEmptyBlocks();
     this.ships = [];
@@ -73,6 +77,23 @@ class Gameboard {
     }
 
     this.shots.push(`${row}-${column}`);
+  }
+
+  placeRandomShips(ships) {
+    const placeRandomShip = (ship) => {
+      const randomRow = Math.floor(Math.random() * Gameboard.size);
+      const randomColumn = Math.floor(Math.random() * Gameboard.size);
+      const randomDirection = Gameboard.getRandomDirection();
+      try {
+        this.placeShip(ship, randomRow, randomColumn, randomDirection);
+      } catch {
+        placeRandomShip(ship);
+      }
+    };
+
+    ships.forEach((ship) => {
+      placeRandomShip(ship);
+    });
   }
 
   get isAllSunk() {

@@ -113,6 +113,11 @@ main {
   list-style: none;
 }
 
+.ship-creation.selected {
+  background-color: black;
+  color: white;
+}
+
 .ship-creation:hover {
   cursor: pointer;
 }

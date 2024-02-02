@@ -128,11 +128,27 @@ const createBoardCreation = () => {
     new Ship(2),
   ];
   let selectedShip = null;
-  const selectedDirection = "row";
+  let selectedDirection = "row";
   const gameBoard = new Gameboard();
 
   const shipsListElement = document.createElement("ul");
   shipsListElement.className = "ships-list";
+
+  const changeDirectionButton = document.createElement("button");
+  changeDirectionButton.innerText = "Change direction";
+  changeDirectionButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    switch (selectedDirection) {
+      case "row":
+        selectedDirection = "column";
+        break;
+      case "column":
+        selectedDirection = "row";
+        break;
+      default:
+        throw new Error("Invalid direction");
+    }
+  });
 
   const updateShipsListElement = () => {
     shipsListElement.innerHTML = "";
@@ -140,14 +156,17 @@ const createBoardCreation = () => {
     availableShips.forEach((ship) => {
       const shipElement = document.createElement("li");
       shipElement.className = "ship-creation";
+      if (ship === selectedShip) {
+        shipElement.classList.add("selected");
+      }
       shipElement.innerText = `${ship.length} blocks ship`;
       shipElement.addEventListener("click", () => {
         selectedShip = ship;
+        updateShipsListElement();
       });
       shipsListElement.appendChild(shipElement);
     });
   };
-
   updateShipsListElement();
 
   const createCreationBlockElement = (row, column) => {
@@ -169,6 +188,9 @@ const createBoardCreation = () => {
         for (let i = 0; i < selectedShip.length; i += 1) {
           if (selectedDirection === "row") {
             blocks[initialIndex + i].classList.add("ship");
+          }
+          if (selectedDirection === "column") {
+            blocks[initialIndex + Gameboard.size * i].classList.add("ship");
           }
         }
 
@@ -195,14 +217,21 @@ const createBoardCreation = () => {
 
       if (!selectedShip) return;
       try {
-        // THIS IS CURRENTLY HARDCODED WITH ROW
-        gameBoard.checkPlaceShipValidity(selectedShip, row, column, "row");
+        gameBoard.checkPlaceShipValidity(
+          selectedShip,
+          row,
+          column,
+          selectedDirection,
+        );
 
         // Show ship in board
         const initialIndex = row * Gameboard.size + column;
         for (let i = 0; i < selectedShip.length; i += 1) {
           if (selectedDirection === "row") {
             blocks[initialIndex + i].classList.add("selected");
+          }
+          if (selectedDirection === "column") {
+            blocks[initialIndex + Gameboard.size * i].classList.add("selected");
           }
         }
       } catch (error) {
@@ -229,6 +258,7 @@ const createBoardCreation = () => {
   }
   boardCreationElement.appendChild(boardContentElement);
   boardCreationElement.appendChild(shipsListElement);
+  boardCreationElement.appendChild(changeDirectionButton);
 
   return [gameBoard, boardCreationElement];
 };
@@ -258,8 +288,21 @@ const showNewGameDialog = () => {
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
+
+    if (playerGameBoard.ships.length !== 5) {
+      log("you need to place all your ships first");
+      return;
+    }
+
     const player1 = new Player(playerNameInput.value, playerGameBoard);
     const player2 = new Player(computerNameInput.value, new Gameboard(), true);
+    player2.gameBoard.placeRandomShips([
+      new Ship(5),
+      new Ship(4),
+      new Ship(3),
+      new Ship(3),
+      new Ship(2),
+    ]);
     const game = new Game(player1, player2);
 
     // Clear boards
