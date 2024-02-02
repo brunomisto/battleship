@@ -76,6 +76,10 @@ class Gameboard {
   }
 
   get isAllSunk() {
+    if (this.ships.length === 0) {
+      throw new Error("No ships in the board");
+    }
+
     if (this.ships.length === 1) {
       return this.ships[0].isSunk;
     }
