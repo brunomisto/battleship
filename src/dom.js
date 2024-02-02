@@ -1,5 +1,8 @@
 // import Ship from "./Ship";
+import Ship from "./Ship";
 import Gameboard from "./Gameboard";
+import Player from "./Player";
+import Game from "./Game";
 
 const log = (message) => {
   document.getElementById("log").innerText = message;
@@ -82,6 +85,7 @@ const createBoardElement = (player, game) => {
   boardElement.className = "board";
 
   const playerNameElement = document.createElement("h2");
+  playerNameElement.textContent = `${player.name}'s board`;
   playerNameElement.className = "name";
 
   const boardContentElement = document.createElement("div");
@@ -109,4 +113,177 @@ const initializeBoards = (boardsElement, game) => {
   boardsElement.appendChild(game.player2.boardElement);
 };
 
-export default initializeBoards;
+const createBoardCreation = () => {
+  const boardCreationElement = document.createElement("div");
+  boardCreationElement.className = "board-creation";
+
+  const boardContentElement = document.createElement("div");
+  boardContentElement.className = "content";
+
+  const availableShips = [
+    new Ship(5),
+    new Ship(4),
+    new Ship(3),
+    new Ship(3),
+    new Ship(2),
+  ];
+  let selectedShip = null;
+  const selectedDirection = "row";
+  const gameBoard = new Gameboard();
+
+  const shipsListElement = document.createElement("ul");
+  shipsListElement.className = "ships-list";
+
+  const updateShipsListElement = () => {
+    shipsListElement.innerHTML = "";
+
+    availableShips.forEach((ship) => {
+      const shipElement = document.createElement("li");
+      shipElement.className = "ship-creation";
+      shipElement.innerText = `${ship.length} blocks ship`;
+      shipElement.addEventListener("click", () => {
+        selectedShip = ship;
+      });
+      shipsListElement.appendChild(shipElement);
+    });
+  };
+
+  updateShipsListElement();
+
+  const createCreationBlockElement = (row, column) => {
+    const clearBlocks = (blockElements) => {
+      blockElements.forEach((block) => {
+        block.classList.remove("selected");
+      });
+    };
+
+    const placeShip = () => {
+      if (!selectedShip) return;
+      const blocks = [...boardContentElement.querySelectorAll(".block")];
+      try {
+        // Place ship in gameboard object
+        gameBoard.placeShip(selectedShip, row, column, selectedDirection);
+
+        // Place ship in gameboard element
+        const initialIndex = row * Gameboard.size + column;
+        for (let i = 0; i < selectedShip.length; i += 1) {
+          if (selectedDirection === "row") {
+            blocks[initialIndex + i].classList.add("ship");
+          }
+        }
+
+        // Remove from available ships array
+        const removeIndex = availableShips.findIndex(
+          (ship) => ship === selectedShip,
+        );
+        availableShips.splice(removeIndex, 1);
+
+        // Update available ships list element and unselect ship
+        updateShipsListElement();
+        selectedShip = null;
+      } catch {
+        clearBlocks(blocks);
+      }
+    };
+
+    const blockElement = document.createElement("div");
+    blockElement.className = "block";
+
+    blockElement.addEventListener("mouseover", () => {
+      const blocks = [...boardContentElement.querySelectorAll(".block")];
+      clearBlocks(blocks);
+
+      if (!selectedShip) return;
+      try {
+        // THIS IS CURRENTLY HARDCODED WITH ROW
+        gameBoard.checkPlaceShipValidity(selectedShip, row, column, "row");
+
+        // Show ship in board
+        const initialIndex = row * Gameboard.size + column;
+        for (let i = 0; i < selectedShip.length; i += 1) {
+          if (selectedDirection === "row") {
+            blocks[initialIndex + i].classList.add("selected");
+          }
+        }
+      } catch (error) {
+        clearBlocks(blocks);
+      }
+    });
+
+    blockElement.addEventListener("mouseout", () => {
+      const blocks = [...boardContentElement.querySelectorAll(".block")];
+      clearBlocks(blocks);
+    });
+
+    blockElement.addEventListener("click", placeShip);
+    return blockElement;
+  };
+
+  for (let i = 0; i < Gameboard.size; i += 1) {
+    const rowElement = document.createElement("div");
+    rowElement.className = "row";
+    for (let j = 0; j < Gameboard.size; j += 1) {
+      rowElement.appendChild(createCreationBlockElement(i, j));
+    }
+    boardContentElement.appendChild(rowElement);
+  }
+  boardCreationElement.appendChild(boardContentElement);
+  boardCreationElement.appendChild(shipsListElement);
+
+  return [gameBoard, boardCreationElement];
+};
+
+const showNewGameDialog = () => {
+  const dialog = document.getElementById("dialog");
+  dialog.innerHTML = "";
+
+  const form = document.createElement("form");
+
+  const playerNameLabel = document.createElement("label");
+  playerNameLabel.innerText = "Player name";
+  const playerNameInput = document.createElement("input");
+  playerNameInput.required = true;
+  playerNameLabel.appendChild(playerNameInput);
+  const [playerGameBoard, playerGameBoardElement] = createBoardCreation();
+
+  const computerNameLabel = document.createElement("label");
+  computerNameLabel.innerText = "Computer name";
+  const computerNameInput = document.createElement("input");
+  computerNameInput.required = true;
+  computerNameLabel.appendChild(computerNameInput);
+
+  const submitButton = document.createElement("button");
+  submitButton.type = "submit";
+  submitButton.innerText = "New game";
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const player1 = new Player(playerNameInput.value, playerGameBoard);
+    const player2 = new Player(computerNameInput.value, new Gameboard(), true);
+    const game = new Game(player1, player2);
+
+    // Clear boards
+    document.getElementById("boards").innerHTML = "";
+
+    initializeBoards(document.getElementById("boards"), game);
+
+    dialog.close();
+  });
+
+  form.appendChild(playerNameLabel);
+  form.appendChild(playerGameBoardElement);
+  form.appendChild(computerNameLabel);
+  form.appendChild(submitButton);
+
+  dialog.appendChild(form);
+  dialog.showModal();
+};
+
+const addListeners = () => {
+  const newGameButton = document.getElementById("new-game");
+  newGameButton.addEventListener("click", () => {
+    showNewGameDialog();
+  });
+};
+
+export { initializeBoards, showNewGameDialog, addListeners };

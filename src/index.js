@@ -2,7 +2,9 @@ import Game from "./Game";
 import Player from "./Player";
 import Gameboard from "./Gameboard";
 import Ship from "./Ship";
-import initializeBoards from "./dom";
+import { initializeBoards, addListeners } from "./dom";
+
+addListeners();
 
 const populatePlayerBoard = (player) => {
   player.gameBoard.placeShip(new Ship(5), 0, 0, "row");
@@ -12,11 +14,11 @@ const populatePlayerBoard = (player) => {
   player.gameBoard.placeShip(new Ship(2), 5, 9, "column");
 };
 
-const player1 = new Player("bruno", new Gameboard());
+const player1 = new Player("foo", new Gameboard());
 const player2 = new Player("computer", new Gameboard(), true);
 
 populatePlayerBoard(player1);
-player2.gameBoard.placeShip(new Ship(1), 0, 0, "row");
+populatePlayerBoard(player2);
 
 const game = new Game(player1, player2);
 initializeBoards(document.getElementById("boards"), game);

@@ -9,6 +9,12 @@ html {
   font-size: 20px;
 }
 
+#dialog[open] {
+  border: 1px solid black;
+  padding: 1rem;
+  margin: auto;
+}
+
 header {
   display: flex;
   justify-content: center;
@@ -26,22 +32,29 @@ main {
 
 #boards {
   display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 50px;
+  padding: 0 50px;
 }
 
 .board {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
   align-items: center;
-  gap: 0.5rem;
 }
 
 .board .content {
-  border: 1px solid black;
-  width: 500px;
-  height: 500px;
+  border: 2px solid black;
+  width: min(60vw, 500px);
+  height: min(60vw, 500px);
   display: flex;
   flex-direction: column;
+}
+
+.board .name {
+  text-align: center;
 }
 
 .board .row {
@@ -50,7 +63,7 @@ main {
 }
 
 .board .block {
-  border: 1px solid black;
+  border: 2px solid black;
   flex: 1;
 }
 
@@ -68,4 +81,38 @@ main {
 
 .board .shot {
   background-color: black;
+}
+
+.board-creation .content {
+  border: 1px solid black;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.board-creation .row {
+  flex: 1;
+  display: flex;
+}
+
+.board-creation .block {
+  border: 1px solid black;
+  flex: 1;
+}
+
+.board-creation .block.selected {
+  background-color: lightgreen;
+}
+
+.board-creation .block.ship {
+  background-color: lightblue;
+}
+
+.ships-list {
+  list-style: none;
+}
+
+.ship-creation:hover {
+  cursor: pointer;
 }
