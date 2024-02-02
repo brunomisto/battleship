@@ -80,13 +80,12 @@ class Gameboard {
       throw new Error("No ships in the board");
     }
 
-    if (this.ships.length === 1) {
-      return this.ships[0].isSunk;
+    for (let i = 0; i < this.ships.length; i += 1) {
+      if (!this.ships[i].isSunk) {
+        return false;
+      }
     }
-
-    return this.ships.reduce(
-      (previous, current) => previous.isSunk && current.isSunk,
-    );
+    return true;
   }
 }
 
