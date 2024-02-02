@@ -19,12 +19,14 @@ header {
 
 main {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
 
 #boards {
   display: flex;
-  gap: 30px;
+  gap: 50px;
 }
 
 .board {
@@ -34,28 +36,36 @@ main {
   gap: 0.5rem;
 }
 
-.board-content {
+.board .content {
   border: 1px solid black;
-  width: 300px;
-  height: 300px;
+  width: 500px;
+  height: 500px;
   display: flex;
   flex-direction: column;
 }
 
-.board-row {
+.board .row {
   flex: 1;
   display: flex;
 }
 
-.board-block {
+.board .block {
   border: 1px solid black;
   flex: 1;
 }
 
-.board-ship {
+.board .ship {
   background-color: lightblue;
 }
 
-.board-block:hover {
+.board .block:hover {
   background-color: lightcoral;
+}
+
+.board .miss {
+  background-color: gray;
+}
+
+.board .shot {
+  background-color: black;
 }
