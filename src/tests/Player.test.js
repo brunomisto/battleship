@@ -34,3 +34,14 @@ test("player can't attack himself", () => {
     player.attack(player, 0, 0);
   }).toThrow("Players can't attack themselves");
 });
+
+test("attacking out of turn throw error", () => {
+  expect(() => {
+    player.attack(enemy, 0, 0);
+  }).toThrow("It is not foo's turn");
+});
+
+test("sucessful attacks return attacked coordinates", () => {
+  player.turn = true;
+  expect(player.attack(enemy, 3, 2)).toEqual([3, 2]);
+});

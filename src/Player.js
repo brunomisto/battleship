@@ -19,6 +19,7 @@ class Player {
 
     player.gameBoard.receiveAttack(randomRow, randomCol);
     this.randomAttacks.push(`${randomRow}-${randomCol}`);
+    return [randomRow, randomCol];
   }
 
   attack(player, row, column) {
@@ -27,15 +28,19 @@ class Player {
     }
 
     if (!this.turn) {
-      throw new Error(`It is not ${player.name}'s turn`);
+      throw new Error(`It is not ${this.name}'s turn`);
     }
 
     if (this.isComputer) {
-      this.randomAttack(player);
-      return;
+      return this.randomAttack(player);
     }
 
     player.gameBoard.receiveAttack(row, column);
+    return [row, column];
+  }
+
+  setBoardElement(boardElement) {
+    this.boardElement = boardElement;
   }
 }
 
